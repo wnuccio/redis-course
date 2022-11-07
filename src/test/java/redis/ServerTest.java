@@ -2,18 +2,18 @@ package redis;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CachedServerTest {
+public class ServerTest {
 
     @Test
-    void cached_server_returns_value_quickly() {
-        CachedServer server = new CachedServer();
-
-        server.write("key", "value");
+    void server_returns_value_slowly() {
+        Server server = new Server();
 
         LocalTime start = LocalTime.now();
         String value = server.read("key");
@@ -21,7 +21,6 @@ public class CachedServerTest {
 
         assertEquals("value", value);
         long latencyInSeconds = Timer.latencyInSeconds(end, start);
-        assertTrue(latencyInSeconds < 1, "Latency: "+ latencyInSeconds);
+        assertTrue(latencyInSeconds > 3, "Latency: "+ latencyInSeconds);
     }
-
 }
