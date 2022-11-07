@@ -11,18 +11,19 @@ public class CachedServerTest {
 
     @Test
     void cached_server_returns_value_quickly() {
-        CachedServer server = new CachedServer();
+        Server server = new Server(10);
+        CachedServer cachedServer = new CachedServer(server);
         Timer timer = new Timer();
 
-        server.write("key", "value");
+        cachedServer.write("key", "value");
 
         timer.start();
-        String value = server.read("key");
+        String value = cachedServer.read("key");
         timer.stop();
 
         assertEquals("value", value);
-        long latencyInSeconds = timer.elapsedSeconds();
-        assertTrue(latencyInSeconds < 1, "Latency: "+ latencyInSeconds);
+        long elapsedSeconds = timer.elapsedSeconds();
+        assertTrue(elapsedSeconds < 1, "Latency: "+ elapsedSeconds);
     }
 
 }

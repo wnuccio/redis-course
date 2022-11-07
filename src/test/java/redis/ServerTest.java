@@ -13,7 +13,7 @@ public class ServerTest {
 
     @Test
     void server_returns_value_slowly() {
-        Server server = new Server();
+        Server server = new Server(3);
         Timer timer = new Timer();
 
         timer.start();
@@ -21,7 +21,7 @@ public class ServerTest {
         timer.stop();
 
         assertEquals("value", value);
-        long latencyInSeconds = timer.elapsedSeconds();
-        assertTrue(latencyInSeconds > 3, "Latency: "+ latencyInSeconds);
+        long elapsedSeconds = timer.elapsedSeconds();
+        assertTrue(elapsedSeconds > 2, "Latency: "+ elapsedSeconds);
     }
 }

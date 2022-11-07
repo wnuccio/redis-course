@@ -3,8 +3,12 @@ package redis;
 import redis.clients.jedis.Jedis;
 
 public class CachedServer {
-    private final Server server = new Server();
+    private final Server server;
     private Jedis cache;
+
+    public CachedServer(Server server) {
+        this.server = server;
+    }
 
     public String read(String key) {
         String cachedValue = cache().get(key);
