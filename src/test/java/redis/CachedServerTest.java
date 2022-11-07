@@ -24,6 +24,22 @@ public class CachedServerTest {
         assertTrue(latencyInSeconds > 3, "Latency: "+ latencyInSeconds);
     }
 
+    @Test
+    void cached_server_returns_value_quickly() {
+        CachedServer server = new CachedServer();
+
+        server.write("key", "value");
+
+        LocalTime start = LocalTime.now();
+        String value = server.read("key");
+        LocalTime end = LocalTime.now();
+
+        assertEquals("value", value);
+        long latencyInSeconds = latencyInSeconds(end, start);
+        assertTrue(latencyInSeconds < 1, "Latency: "+ latencyInSeconds);
+
+    }
+
     private long latencyInSeconds(LocalTime start, LocalTime end) {
         return Duration.between(end, start).get(ChronoUnit.SECONDS);
     }
