@@ -30,4 +30,6 @@ public class CachedServer {
         return cache;
     }
 
+    public void writeWithExpiration(String key, String value, int i) {
+    }
 }

@@ -19,4 +19,12 @@ public class Timer {
     public long elapsedSeconds() {
         return Duration.between(start, end).get(ChronoUnit.SECONDS);
     }
+
+    public void waitSomeSeconds(int i) {
+        try {
+            Thread.sleep(i * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }
