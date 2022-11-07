@@ -21,16 +21,7 @@ public class Server {
         if (result == null)
             throw new IllegalArgumentException("Invalid key: " + key);
 
-        waitFor(delayInSeconds);
+        new Timer().waitSomeSeconds(delayInSeconds);
         return result;
-    }
-
-    private void waitFor(int seconds) {
-        try {
-            long milliseconds = seconds * 1000L;
-            Thread.sleep(milliseconds);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }
