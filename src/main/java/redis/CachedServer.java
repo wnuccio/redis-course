@@ -1,6 +1,7 @@
 package redis;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.params.SetParams;
 
 public class CachedServer {
     private final Server server;
@@ -8,6 +9,10 @@ public class CachedServer {
 
     public CachedServer(Server server) {
         this.server = server;
+    }
+
+    public void delete(String key) {
+        cache().del(key);
     }
 
     public String read(String key) {
@@ -20,6 +25,12 @@ public class CachedServer {
 
     public void write(String key, String value) {
         cache().set(key, value);
+        server.write(key, value);
+    }
+
+    public void writeWithExpiration(String key, String value, int expirationTimeInSeconds) {
+        cache().set(key, value, SetParams.setParams().ex(expirationTimeInSeconds));
+        server.write(key, value);
     }
 
     private Jedis cache() {
@@ -28,8 +39,5 @@ public class CachedServer {
             cache.auth("7vkXLfZRpRe5fyJ4kFM4wN0UHUJJQ76I");
         }
         return cache;
-    }
-
-    public void writeWithExpiration(String key, String value, int i) {
     }
 }

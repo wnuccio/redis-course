@@ -1,5 +1,6 @@
 package redis;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalTime;
@@ -9,28 +10,34 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CachedServerTest {
 
+    private CachedServer cachedServer;
+    private Timer timer;
+
+    @BeforeEach
+    void setUp() {
+        Server server = new Server(4);
+        cachedServer = new CachedServer(server);
+        timer = new Timer();
+
+        cachedServer.delete("key1");
+        cachedServer.delete("key2");
+    }
+
     @Test
     void cached_server_returns_value_quickly() {
-        Server server = new Server(10);
-        CachedServer cachedServer = new CachedServer(server);
-        Timer timer = new Timer();
-
-        cachedServer.write("key", "value");
+        cachedServer.write("key1", "value1");
 
         timer.start();
-        String value = cachedServer.read("key");
+        String value = cachedServer.read("key1");
         timer.stop();
 
-        assertEquals("value", value);
+        assertEquals("value1", value);
         long elapsedSeconds = timer.elapsedSeconds();
-        assertTrue(elapsedSeconds < 1, "Latency: "+ elapsedSeconds);
+        assertTrue(elapsedSeconds < 2, "Latency: "+ elapsedSeconds);
     }
 
     @Test
     void cached_server_returns_different_values_for_different_keys() {
-        Server server = new Server(0);
-        CachedServer cachedServer = new CachedServer(server);
-
         cachedServer.write("key1", "value1");
         cachedServer.write("key2", "value2");
 
@@ -41,22 +48,26 @@ public class CachedServerTest {
         assertEquals("value2", value2);
     }
 
-    //    @Test
-//    void cached_server_remove_values_after_expiration_time() {
-//        Server server = new Server(4);
-//        CachedServer cachedServer = new CachedServer(server);
-//        Timer timer = new Timer();
-//
-//        cachedServer.writeWithExpiration("key", "value", 2);
-//
-//        timer.waitSomeSeconds(3);
-//
-//        timer.start();
-//        String value = cachedServer.read("key");
-//        timer.stop();
-//
-//        assertEquals("value", value);
-//        long elapsedSeconds = timer.elapsedSeconds();
-//        assertTrue(elapsedSeconds > 3, "Latency: "+ elapsedSeconds);
-//    }
+    @Test
+    void cached_server_remove_values_after_expiration_time() {
+        cachedServer.write("key1", "value1");
+        cachedServer.writeWithExpiration("key2", "value2", 1);
+
+        timer.waitSomeSeconds(1);
+
+        timer.start();
+        String value1 = cachedServer.read("key1");
+        timer.stop();
+        long elapsedSeconds1 = timer.elapsedSeconds();
+
+        timer.start();
+        String value2 = cachedServer.read("key2");
+        timer.stop();
+        long elapsedSeconds2 = timer.elapsedSeconds();
+
+        assertEquals("value1", value1);
+        assertEquals("value2", value2);
+        assertTrue(elapsedSeconds1 < 1, "Latency: "+ elapsedSeconds1);
+        assertTrue(elapsedSeconds2 > 3, "Latency: "+ elapsedSeconds2);
+    }
 }
