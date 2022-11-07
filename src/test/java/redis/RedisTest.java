@@ -3,14 +3,14 @@ package redis;
 import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Jedis;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class RedisTest {
     @Test
     void name() {
         Jedis jedis = jedis();
 
-        System.out.println(jedis.info());
-
-        assert(1 == 1);
+        assertEquals(null, jedis.get("prova"));
     }
 
     private Jedis jedis() {
