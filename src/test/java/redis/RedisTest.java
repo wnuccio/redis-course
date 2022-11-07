@@ -1,16 +1,33 @@
 package redis;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Jedis;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RedisTest {
-    @Test
-    void name() {
-        Jedis jedis = jedis();
 
+    private Jedis jedis;
+
+    @BeforeEach
+    void setUp() {
+        jedis = jedis();
+        jedis.del("prova");
+    }
+
+    @AfterEach
+    void tearDown() {
+        jedis.del("prova");
+    }
+
+    @Test
+    void set_and_retrieve_value() {
         assertEquals(null, jedis.get("prova"));
+
+        jedis.set("prova", "valore");
+        assertEquals("valore", jedis.get("prova"));
     }
 
     private Jedis jedis() {
