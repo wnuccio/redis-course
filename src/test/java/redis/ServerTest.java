@@ -14,13 +14,14 @@ public class ServerTest {
     @Test
     void server_returns_value_slowly() {
         Server server = new Server();
+        Timer timer = new Timer();
 
-        LocalTime start = LocalTime.now();
+        timer.start();
         String value = server.read("key");
-        LocalTime end = LocalTime.now();
+        timer.stop();
 
         assertEquals("value", value);
-        long latencyInSeconds = Timer.latencyInSeconds(end, start);
+        long latencyInSeconds = timer.elapsedSeconds();
         assertTrue(latencyInSeconds > 3, "Latency: "+ latencyInSeconds);
     }
 }
