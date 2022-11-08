@@ -3,6 +3,7 @@ package redis;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Map;
 
@@ -118,5 +119,15 @@ public class CachedServerTest {
         int num = cachedServer.readNum("key");
 
         assertEquals(1234, num);
+    }
+
+    @Test
+    void write_and_retrieve_a_date() {
+        LocalDate date = LocalDate.now();
+        cachedServer.writeDate("key", date);
+
+        LocalDate retrievedDate = cachedServer.readDate("key");
+
+        assertEquals(date, retrievedDate);
     }
 }

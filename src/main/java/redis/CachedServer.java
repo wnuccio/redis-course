@@ -3,6 +3,8 @@ package redis;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.params.SetParams;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public class CachedServer {
@@ -70,5 +72,13 @@ public class CachedServer {
 
     public int readNum(String key) {
         return Integer.parseInt(cache.get(key));
+    }
+
+    public void writeDate(String key, LocalDate date) {
+        cache.set(key, date.format(DateTimeFormatter.ISO_LOCAL_DATE));
+    }
+
+    public LocalDate readDate(String key) {
+        return LocalDate.parse(cache.get(key), DateTimeFormatter.ISO_LOCAL_DATE);
     }
 }
