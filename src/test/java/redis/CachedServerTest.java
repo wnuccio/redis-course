@@ -3,8 +3,6 @@ package redis;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalTime;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -16,7 +14,8 @@ public class CachedServerTest {
     @BeforeEach
     void setUp() {
         Server server = new Server(4);
-        cachedServer = new CachedServer(server);
+        RedisClientFactory redisClient = new RedisClientFactory();
+        cachedServer = new CachedServer(server, redisClient);
         timer = new Timer();
 
         cachedServer.delete("key1");
