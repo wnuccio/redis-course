@@ -2,30 +2,17 @@ package redis;
 
 import redis.clients.jedis.Jedis;
 
-public class ServerWithCache {
+public class ServerWithCacheOnRead {
     private final SlowServer server;
     private final Jedis cache;
 
-    public ServerWithCache(SlowServer server, Jedis jedis) {
+    public ServerWithCacheOnRead(SlowServer server, Jedis jedis) {
         this.server = server;
         this.cache = jedis;
     }
 
     public void write(String key, String value) {
         server.write(key, value);
-    }
-
-    public void writeAndCache(String key, String value) {
-        server.write(key, value);
-        cache.set(key, value);
-    }
-
-    public String read(String key) {
-        String cachedValue = cache.get(key);
-        if (cachedValue != null)
-            return cachedValue;
-
-        return server.read(key);
     }
 
     public String readAndCash(String key) {
