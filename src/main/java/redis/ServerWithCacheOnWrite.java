@@ -21,7 +21,7 @@ public class ServerWithCacheOnWrite {
         if (cachedValue != null)
             return cachedValue;
 
-        return server.read(key);
+        return server.readSlowly(key);
     }
 
 }

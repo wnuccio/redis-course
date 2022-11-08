@@ -15,7 +15,7 @@ public class SlowServer {
         map.put(key, value);
     }
 
-    public String read(String key) {
+    public String readSlowly(String key) {
         String result = map.get(key);
 
         if (result == null)

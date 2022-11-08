@@ -20,7 +20,7 @@ public class ServerWithCacheOnRead {
         if (cachedValue != null)
             return cachedValue;
 
-        String value = server.read(key);
+        String value = server.readSlowly(key);
         cache.set(key, value);
         return value;
     }
