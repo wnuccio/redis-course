@@ -9,7 +9,6 @@ public class ServerWithCache {
     public ServerWithCache(SlowServer server, Jedis jedis) {
         this.server = server;
         this.cache = jedis;
-        this.cache.flushDB(); // empties the database completely
     }
 
     public void write(String key, String value) {
