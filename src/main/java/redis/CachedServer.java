@@ -42,4 +42,20 @@ public class CachedServer {
     public String readHash(String hashKey, String subkey) {
         return cache.hget(hashKey, subkey);
     }
+
+    //////////// Cash on read ////////////
+
+    public void writeNoCash(String key, String value) {
+        server.write(key, value);
+    }
+
+    public String readAndCash(String key) {
+        String cachedValue = cache.get(key);
+        if (cachedValue != null)
+            return cachedValue;
+
+        String value = server.read(key);
+        cache.set(key, value);
+        return value;
+    }
 }

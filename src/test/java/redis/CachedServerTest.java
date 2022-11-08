@@ -79,4 +79,25 @@ public class CachedServerTest {
         assertEquals("subvalue1", subvalue1);
         assertEquals("subvalue2", subvalue2);
     }
+
+    @Test
+    void write_withouth_caching_and_cache_on_first_read() {
+        cachedServer.writeNoCash("key", "value");
+
+        timer.start();
+        String value1 = cachedServer.readAndCash("key");
+        timer.stop();
+        long elapsedSeconds1 = timer.elapsedSeconds();
+
+        timer.start();
+        String value2 = cachedServer.readAndCash("key");
+        timer.stop();
+        long elapsedSeconds2 = timer.elapsedSeconds();
+
+        assertEquals("value", value1);
+        assertEquals("value", value2);
+        assertTrue(elapsedSeconds1 > 3, "Latency: "+ elapsedSeconds1);
+        assertTrue(elapsedSeconds2 < 1, "Latency: "+ elapsedSeconds2);
+
+    }
 }
