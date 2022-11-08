@@ -15,6 +15,7 @@ public class CachedServer {
         this.cache.flushDB(); // empties the database completely
     }
 
+    // cache on write strategy
     public void write(String key, String value) {
         cache.set(key, value);
         server.write(key, value);
@@ -34,7 +35,6 @@ public class CachedServer {
     }
 
     ////////////// Hash /////////////////
-
     public void writeHash(String hashKey, Map<String, String> subkeys) {
         cache.hset(hashKey, subkeys);
     }
@@ -43,8 +43,12 @@ public class CachedServer {
         return cache.hget(hashKey, subkey);
     }
 
-    //////////// Cash on read ////////////
 
+    public Map<String, String> readAllHash(String key) {
+        return cache.hgetAll(key);
+    }
+
+    //////////// Cash on read strategy ////////////
     public void writeNoCash(String key, String value) {
         server.write(key, value);
     }

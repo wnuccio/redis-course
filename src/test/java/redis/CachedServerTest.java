@@ -3,10 +3,10 @@ package redis;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CachedServerTest {
 
@@ -71,13 +71,24 @@ public class CachedServerTest {
 
     @Test
     void cached_server_retrieve_hash_values() {
-        cachedServer.writeHash("hashKey", Map.of("subkey1", "subvalue1", "subkey2", "subvalue2"));
+        cachedServer.writeHash("hashkey", Map.of("subkey1", "subvalue1", "subkey2", "subvalue2"));
 
-        String subvalue1 = cachedServer.readHash("hashKey", "subkey1");
-        String subvalue2 = cachedServer.readHash("hashKey", "subkey2");
+        Map<String, String> allValues = cachedServer.readAllHash("hashkey");
+        assertEquals(Map.of("subkey1", "subvalue1", "subkey2", "subvalue2"), allValues);
 
+        String subvalue1 = cachedServer.readHash("hashkey", "subkey1");
+        String subvalue2 = cachedServer.readHash("hashkey", "subkey2");
         assertEquals("subvalue1", subvalue1);
         assertEquals("subvalue2", subvalue2);
+    }
+
+    @Test
+    void cached_server_return_empty_map_for_a_missing_hash() {
+        Map<String, String> allValues = cachedServer.readAllHash("key");
+        String value = cachedServer.readHash("key", "subkey");
+
+        assertEquals(Collections.emptyMap(), allValues);
+        assertNull(value);
     }
 
     @Test
