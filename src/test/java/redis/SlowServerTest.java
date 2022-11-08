@@ -2,18 +2,14 @@ package redis;
 
 import org.junit.jupiter.api.Test;
 
-import java.time.Duration;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ServerTest {
+public class SlowServerTest {
 
     @Test
     void server_returns_value_slowly() {
-        Server server = new Server(3);
+        SlowServer server = new SlowServer(3);
         Timer timer = new Timer();
 
         server.write("key1", "value1");
@@ -29,7 +25,7 @@ public class ServerTest {
 
     @Test
     void server_returns_different_values_for_different_keys() {
-        Server server = new Server(0);
+        SlowServer server = new SlowServer(0);
 
         server.write("key1", "value1");
         server.write("key2", "value2");
@@ -40,6 +36,4 @@ public class ServerTest {
         assertEquals("value1", value1);
         assertEquals("value2", value2);
     }
-
-
 }

@@ -3,11 +3,11 @@ package redis;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Server {
+public class SlowServer {
     private final Map<String, String> map = new HashMap<>();
     private final int delayInSeconds;
 
-    public Server(int delayInSeconds) {
+    public SlowServer(int delayInSeconds) {
         this.delayInSeconds = delayInSeconds;
     }
 
