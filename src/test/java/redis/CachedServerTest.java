@@ -3,6 +3,8 @@ package redis;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -20,6 +22,7 @@ public class CachedServerTest {
 
         cachedServer.delete("key1");
         cachedServer.delete("key2");
+        cachedServer.deleteHash("hashKey", "subkey1", "subvalue1", "subkey2", "subvalue2");
     }
 
     @Test
@@ -68,5 +71,16 @@ public class CachedServerTest {
         assertEquals("value2", value2);
         assertTrue(elapsedSeconds1 < 1, "Latency: "+ elapsedSeconds1);
         assertTrue(elapsedSeconds2 > 3, "Latency: "+ elapsedSeconds2);
+    }
+
+    @Test
+    void cached_server_retrieve_hash_values() {
+        cachedServer.writeHash("hashKey", Map.of("subkey1", "subvalue1", "subkey2", "subvalue2"));
+
+        String subvalue1 = cachedServer.readHash("hashKey", "subkey1");
+        String subvalue2 = cachedServer.readHash("hashKey", "subkey2");
+
+        assertEquals("subvalue1", subvalue1);
+        assertEquals("subvalue2", subvalue2);
     }
 }

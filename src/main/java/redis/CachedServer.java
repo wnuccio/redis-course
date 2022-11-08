@@ -3,6 +3,8 @@ package redis;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.params.SetParams;
 
+import java.util.Map;
+
 public class CachedServer {
     private final Server server;
     private final Jedis cache;
@@ -34,4 +36,17 @@ public class CachedServer {
         server.write(key, value);
     }
 
+    ////////////// Hash /////////////////
+
+    public void deleteHash(String hashKey, String... subkeys) {
+        cache.hdel(hashKey, subkeys);
+    }
+
+    public void writeHash(String hashKey, Map<String, String> subkeys) {
+        cache.hset(hashKey, subkeys);
+    }
+
+    public String readHash(String hashKey, String subkey) {
+        return cache.hget(hashKey, subkey);
+    }
 }
