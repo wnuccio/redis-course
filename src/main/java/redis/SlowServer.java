@@ -21,7 +21,7 @@ public class SlowServer {
         if (result == null)
             throw new IllegalArgumentException("Invalid key: " + key);
 
-        new Timer().waitSomeSeconds(delayInSeconds);
+        Timer.waitSomeSeconds(delayInSeconds);
         return result;
     }
 }

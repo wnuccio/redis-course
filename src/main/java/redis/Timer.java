@@ -20,9 +20,9 @@ public class Timer {
         return Duration.between(start, end).get(ChronoUnit.SECONDS);
     }
 
-    public void waitSomeSeconds(int i) {
+    public static void waitSomeSeconds(int i) {
         try {
-            Thread.sleep(i * 1000);
+            Thread.sleep(i * 1000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

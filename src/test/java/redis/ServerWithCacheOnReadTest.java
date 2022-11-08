@@ -24,6 +24,6 @@ public class ServerWithCacheOnReadTest {
         result1.assertValueReadNotInTime("value", 3);
 
         Result result2 = Result.read(() -> server.readAndCash("key"));
-        result2.assertValueReadInTime("value", 1);
+        result2.assertValueReadInTime("value", 2);
     }
 }

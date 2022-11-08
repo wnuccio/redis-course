@@ -40,7 +40,7 @@ public class RedisClientTest {
         redis.set("key1", "value1");
         redis.set("key2", "value2", SetParams.setParams().ex(1));
 
-        new Timer().waitSomeSeconds(1);
+        Timer.waitSomeSeconds(1);
 
         assertEquals("value1", redis.get("key1"));
         assertNull(redis.get("key2"));
