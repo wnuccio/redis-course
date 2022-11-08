@@ -109,6 +109,14 @@ public class CachedServerTest {
         assertEquals("value", value2);
         assertTrue(elapsedSeconds1 > 3, "Latency: "+ elapsedSeconds1);
         assertTrue(elapsedSeconds2 < 1, "Latency: "+ elapsedSeconds2);
+    }
 
+    @Test
+    void write_and_retrieve_a_number() {
+        cachedServer.writeNum("key", 1234);
+
+        int num = cachedServer.readNum("key");
+
+        assertEquals(1234, num);
     }
 }

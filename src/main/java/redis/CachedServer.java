@@ -62,4 +62,13 @@ public class CachedServer {
         cache.set(key, value);
         return value;
     }
+
+    ///////////// Numbers ///////////////////
+    public void writeNum(String key, int number) {
+        cache.set(key, String.valueOf(number));
+    }
+
+    public int readNum(String key) {
+        return Integer.parseInt(cache.get(key));
+    }
 }
