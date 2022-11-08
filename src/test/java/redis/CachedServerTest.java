@@ -19,10 +19,6 @@ public class CachedServerTest {
         RedisClientFactory redisClient = new RedisClientFactory();
         cachedServer = new CachedServer(server, redisClient);
         timer = new Timer();
-
-        cachedServer.delete("key1");
-        cachedServer.delete("key2");
-        cachedServer.deleteHash("hashKey", "subkey1", "subvalue1", "subkey2", "subvalue2");
     }
 
     @Test
@@ -53,7 +49,7 @@ public class CachedServerTest {
     @Test
     void cached_server_remove_values_after_expiration_time() {
         cachedServer.write("key1", "value1");
-        cachedServer.writeWithExpiration("key2", "value2", 1);
+        cachedServer.write("key2", "value2", 1);
 
         timer.waitSomeSeconds(1);
 

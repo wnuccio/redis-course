@@ -18,4 +18,9 @@ public class RedisClientFactory {
             throw e;
         }
     }
+
+    public static void main(String[] args) {
+        // run this main if you want to empty the database
+        new RedisClientFactory().createClient().flushDB();
+    }
 }

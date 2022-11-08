@@ -12,10 +12,17 @@ public class CachedServer {
     public CachedServer(Server server, RedisClientFactory clientFactory) {
         this.server = server;
         this.cache = clientFactory.createClient();
+        this.cache.flushDB(); // empties the database completely
     }
 
-    public void delete(String key) {
-        cache.del(key);
+    public void write(String key, String value) {
+        cache.set(key, value);
+        server.write(key, value);
+    }
+
+    public void write(String key, String value, int expirationTimeInSeconds) {
+        cache.set(key, value, SetParams.setParams().ex(expirationTimeInSeconds));
+        server.write(key, value);
     }
 
     public String read(String key) {
@@ -26,21 +33,7 @@ public class CachedServer {
         return server.read(key);
     }
 
-    public void write(String key, String value) {
-        cache.set(key, value);
-        server.write(key, value);
-    }
-
-    public void writeWithExpiration(String key, String value, int expirationTimeInSeconds) {
-        cache.set(key, value, SetParams.setParams().ex(expirationTimeInSeconds));
-        server.write(key, value);
-    }
-
     ////////////// Hash /////////////////
-
-    public void deleteHash(String hashKey, String... subkeys) {
-        cache.hdel(hashKey, subkeys);
-    }
 
     public void writeHash(String hashKey, Map<String, String> subkeys) {
         cache.hset(hashKey, subkeys);
