@@ -11,8 +11,7 @@ public class ServerWithCacheOnWriteTest {
     @BeforeEach
     void setUp() {
         SlowServer server = new SlowServer(4);
-        Jedis jedis = new RedisClientFactory().createClient();
-        jedis.flushDB(); // empties the database completely
+        Jedis jedis = new RedisClientFactory().loginToRedisAndFlushDb();
         this.server = new ServerWithCacheOnWrite(server, jedis);
     }
 

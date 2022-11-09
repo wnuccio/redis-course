@@ -19,8 +19,7 @@ public class RedisClientTest {
 
     @BeforeEach
     void setUp() {
-        redis = new RedisClientFactory().createClient();
-        redis.flushDB();
+        redis = new RedisClientFactory().loginToRedisAndFlushDb();
     }
 
     @Test

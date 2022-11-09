@@ -14,8 +14,7 @@ public class UserDatabase {
     private final Jedis redis;
 
     public UserDatabase() {
-        redis = new RedisClientFactory().createClient();
-        redis.flushDB();
+        redis = new RedisClientFactory().loginToRedisAndFlushDb();
     }
 
     public void write(User user) {
