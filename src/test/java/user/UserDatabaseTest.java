@@ -17,9 +17,7 @@ public class UserDatabaseTest {
 
         User retrievedUser = userDatabase.read(new UserId(1));
 
-        assertEquals(retrievedUser.name(), "Pippo");
-        assertEquals(retrievedUser.age(), 43);
-        assertEquals(retrievedUser.dateOfBirth(), LocalDate.of(1975, 9, 21));
+        assertEquals(retrievedUser, user);
     }
 
     @Test
