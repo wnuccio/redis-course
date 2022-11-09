@@ -1,5 +1,6 @@
 package redis;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Jedis;
@@ -7,11 +8,9 @@ import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 import redis.clients.jedis.params.SetParams;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RedisClientTest {
@@ -93,5 +92,19 @@ public class RedisClientTest {
         assertTrue(members.contains("red"));
         assertTrue(members.contains("blue"));
         assertTrue(members.contains("green"));
+    }
+
+    @Test
+    void operations_on_sets() {
+        redis.sadd("colors1", "red", "green");
+        redis.sadd("colors2", "green", "blue");
+
+        Set<String> union = redis.sunion("colors1", "colors2");
+        Set<String> intersection = redis.sinter("colors1", "colors2");
+        Set<String> difference = redis.sdiff("colors1", "colors2");
+
+        assertThat(union).containsExactlyInAnyOrder("red", "green", "blue");
+        assertThat(intersection).containsExactlyInAnyOrder("green");
+        assertThat(difference).containsExactlyInAnyOrder("red");
     }
 }
