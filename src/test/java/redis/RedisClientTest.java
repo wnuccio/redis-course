@@ -7,11 +7,12 @@ import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 import redis.clients.jedis.params.SetParams;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RedisClientTest {
 
@@ -79,5 +80,18 @@ public class RedisClientTest {
 
         assertEquals("value1", resp1.get());
         assertEquals("value2", resp2.get());
+    }
+
+    @Test
+    void add_and_retrieves_members_in_a_set() {
+        redis.sadd("colors", "red", "blue", "green");
+        redis.sadd("colors", "blue");
+
+        Set<String> members = redis.smembers("colors");
+
+        assertEquals(3, members.size());
+        assertTrue(members.contains("red"));
+        assertTrue(members.contains("blue"));
+        assertTrue(members.contains("green"));
     }
 }
