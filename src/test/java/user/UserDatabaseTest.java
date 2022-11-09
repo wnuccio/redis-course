@@ -41,6 +41,17 @@ public class UserDatabaseTest {
     void return_optional_user_from_read() {
         Optional<User> retrievedUser = userDatabase.read(new UserId(1));
 
-        assertTrue(retrievedUser.isPresent());
+        assertTrue(retrievedUser.isEmpty());
+    }
+
+    @Test
+    void return_only_present_users_from_read_all() {
+        User user1 = new User(new UserId(1), "Pippo", 43, LocalDate.of(1975, 9, 21));
+        userDatabase.writeAll(user1);
+
+        List<User> users = userDatabase.readAll(new UserId(1), new UserId(2), new UserId(3));
+
+        assertEquals(1, users.size());
+        assertEquals(user1, users.get(0));
     }
 }

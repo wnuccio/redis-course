@@ -11,7 +11,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class UserDatabase {
-    private final Jedis redis = new RedisClientFactory().createClient();
+    private final Jedis redis;
+
+    public UserDatabase() {
+        redis = new RedisClientFactory().createClient();
+        redis.flushDB();
+    }
 
     public void write(User user) {
         Map<String, String> serializedUser = serialize(user);
@@ -53,7 +58,8 @@ public class UserDatabase {
 
         for (UserId userId: userIds) {
             Map<String, String> serializedUser = userMap.get(userId).get();
-            result.add(unserialize(userId, serializedUser));
+            if (! serializedUser.isEmpty())
+                result.add(unserialize(userId, serializedUser));
         }
 
         return result;
@@ -68,7 +74,7 @@ public class UserDatabase {
 
     private User unserialize(UserId userId, Map<String, String> serializedUser) {
         if (serializedUser.isEmpty())
-            throw new IllegalArgumentException("No such a serliazed user for " + userId);
+            throw new IllegalArgumentException("No such a serialized user for " + userId);
 
         return new User(
                 userId,
