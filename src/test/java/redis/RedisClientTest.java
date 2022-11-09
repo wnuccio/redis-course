@@ -3,6 +3,8 @@ package redis;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.Response;
 import redis.clients.jedis.params.SetParams;
 
 import java.time.LocalDate;
@@ -87,5 +89,19 @@ public class RedisClientTest {
         LocalDate retrievedDate = LocalDate.parse(redis.get("key"), formatter);
 
         assertEquals(date, retrievedDate);
+    }
+
+    @Test
+    void read_multiple_keys_with_a_pipeline() {
+        redis.set("key1", "value1");
+        redis.set("key2", "value2");
+
+        Pipeline pipeline = redis.pipelined();
+        Response<String> resp1 = pipeline.get("key1");
+        Response<String> resp2 = pipeline.get("key2");
+        pipeline.sync();
+
+        assertEquals("value1", resp1.get());
+        assertEquals("value2", resp2.get());
     }
 }
