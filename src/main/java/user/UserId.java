@@ -2,7 +2,7 @@ package user;
 
 import java.util.Objects;
 
-public class UserId implements Comparable<UserId> {
+public class UserId {
     private final int id;
 
     public UserId(int id) {
@@ -11,11 +11,6 @@ public class UserId implements Comparable<UserId> {
 
     public int value() {
         return id;
-    }
-
-    @Override
-    public int compareTo(UserId other) {
-        return Integer.compare(this.id, other.id);
     }
 
     @Override
@@ -29,5 +24,12 @@ public class UserId implements Comparable<UserId> {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "UserId{" +
+                "id=" + id +
+                '}';
     }
 }

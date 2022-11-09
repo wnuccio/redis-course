@@ -8,10 +8,10 @@ import redis.clients.jedis.Response;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class UserDatabase {
     private final Jedis redis = new RedisClientFactory().createClient();
@@ -49,15 +49,14 @@ public class UserDatabase {
         }
         pipeline.sync();
 
+        ArrayList<User> result = new ArrayList<>();
 
-        return userMap.entrySet().stream()
-                .map(entry -> {
-                    UserId userId = entry.getKey();
-                    Response<Map<String, String>> serializedUser = entry.getValue();
-                    return unserialize(userId, serializedUser.get());
-                })
-                .sorted()
-                .collect(Collectors.toList());
+        for (UserId userId: userIds) {
+            Map<String, String> serializedUser = userMap.get(userId).get();
+            result.add(unserialize(userId, serializedUser));
+        }
+
+        return result;
     }
 
     private Map<String, String> serialize(User user) {
@@ -68,6 +67,9 @@ public class UserDatabase {
     }
 
     private User unserialize(UserId userId, Map<String, String> serializedUser) {
+        if (serializedUser.isEmpty())
+            throw new IllegalArgumentException("No such a serliazed user for " + userId);
+
         return new User(
                 userId,
                 serializedUser.get("name"),

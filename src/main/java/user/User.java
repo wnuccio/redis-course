@@ -3,7 +3,7 @@ package user;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class User implements Comparable<User> {
+public class User {
 
     private final UserId userId;
     private final String name;
@@ -44,11 +44,6 @@ public class User implements Comparable<User> {
     @Override
     public int hashCode() {
         return Objects.hash(userId, name, age, dateOfBirth);
-    }
-
-    @Override
-    public int compareTo(User o) {
-        return this.userId.compareTo(o.userId);
     }
 
     @Override
