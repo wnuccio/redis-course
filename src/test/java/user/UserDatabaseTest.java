@@ -4,8 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UserDatabaseTest {
     private final UserDatabase userDatabase = new UserDatabase();
@@ -15,9 +17,10 @@ public class UserDatabaseTest {
         User user = new User(new UserId(1), "Pippo", 43, LocalDate.of(1975, 9, 21));
         userDatabase.write(user);
 
-        User retrievedUser = userDatabase.read(new UserId(1));
+        Optional<User> retrievedUser = userDatabase.read(new UserId(1));
 
-        assertEquals(retrievedUser, user);
+        assertTrue(retrievedUser.isPresent());
+        assertEquals(retrievedUser.get(), user);
     }
 
     @Test
@@ -32,5 +35,12 @@ public class UserDatabaseTest {
         assertEquals(users.get(0), user3);
         assertEquals(users.get(1), user1);
         assertEquals(users.get(2), user2);
+    }
+
+    @Test
+    void return_optional_user_from_read() {
+        Optional<User> retrievedUser = userDatabase.read(new UserId(1));
+
+        assertTrue(retrievedUser.isPresent());
     }
 }

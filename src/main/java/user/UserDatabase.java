@@ -8,10 +8,7 @@ import redis.clients.jedis.Response;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class UserDatabase {
     private final Jedis redis = new RedisClientFactory().createClient();
@@ -22,10 +19,13 @@ public class UserDatabase {
         redis.hset(userKey(user.userId()), serializedUser);
     }
 
-    public User read(UserId userId) {
+    public Optional<User> read(UserId userId) {
         Map<String, String> serializedUser = redis.hgetAll(userKey(userId));
 
-        return unserialize(userId, serializedUser);
+        if (serializedUser.isEmpty())
+            return Optional.empty();
+
+        return Optional.of(unserialize(userId, serializedUser));
     }
 
     public void writeAll(User... users) {
