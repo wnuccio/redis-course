@@ -7,8 +7,6 @@ import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 import redis.clients.jedis.params.SetParams;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Map;
 
@@ -68,27 +66,6 @@ public class RedisClientTest {
 
         assertEquals(Collections.emptyMap(), allValues);
         assertNull(value);
-    }
-
-    @Test
-    void redis_writes_and_returns_a_number() {
-        redis.set("key", Integer.valueOf(1234).toString());
-
-        int num = Integer.parseInt(redis.get("key"));
-
-        assertEquals(1234, num);
-    }
-
-    @Test
-    void write_and_retrieve_a_date() {
-        LocalDate date = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
-
-        redis.set("key", date.format(formatter));
-
-        LocalDate retrievedDate = LocalDate.parse(redis.get("key"), formatter);
-
-        assertEquals(date, retrievedDate);
     }
 
     @Test
