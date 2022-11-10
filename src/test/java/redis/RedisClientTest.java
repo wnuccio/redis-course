@@ -7,6 +7,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 import redis.clients.jedis.params.SetParams;
+import redis.clients.jedis.resps.Tuple;
 
 import java.util.*;
 
@@ -106,5 +107,16 @@ public class RedisClientTest {
         assertThat(union).containsExactlyInAnyOrder("red", "green", "blue");
         assertThat(intersection).containsExactlyInAnyOrder("green");
         assertThat(difference).containsExactlyInAnyOrder("red");
+    }
+
+    @Test
+    void ordered_set_of_values() {
+        redis.zadd("key", 2, "value2");
+        redis.zadd("key", 1, "value1");
+        redis.zadd("key", 3, "value3");
+
+        List<String> all = redis.zrange("key", 0, 2);
+
+        assertThat(all).containsExactly("value1", "value2", "value3");
     }
 }
