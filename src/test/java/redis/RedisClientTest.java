@@ -119,4 +119,21 @@ public class RedisClientTest {
 
         assertThat(all).containsExactly("value1", "value2", "value3");
     }
+
+    @Test
+    void retrieve_items_added_to_a_sorted_set() {
+        redis.hset("user1", Map.of("name", "Pippo", "age", "35"));
+        redis.hset("user2", Map.of("name", "Pluto", "age", "30"));
+        redis.hset("user3", Map.of("name", "Minni", "age", "40"));
+
+        redis.zadd("users:age", 35, "user1");
+        redis.zadd("users:age", 30, "user2");
+        redis.zadd("users:age", 40, "user3");
+
+        List<String> userKeys = redis.zrange("users:age", 0, 2);
+
+        assertEquals("Pluto", redis.hgetAll(userKeys.get(0)).get("name"));
+        assertEquals("Pippo", redis.hgetAll(userKeys.get(1)).get("name"));
+        assertEquals("Minni", redis.hgetAll(userKeys.get(2)).get("name"));
+    }
 }
