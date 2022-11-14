@@ -7,6 +7,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 import redis.clients.jedis.params.SetParams;
+import redis.clients.jedis.params.SortingParams;
 import redis.clients.jedis.resps.Tuple;
 
 import java.util.*;
@@ -135,5 +136,26 @@ public class RedisClientTest {
         assertEquals("Pluto", redis.hgetAll(userKeys.get(0)).get("name"));
         assertEquals("Pippo", redis.hgetAll(userKeys.get(1)).get("name"));
         assertEquals("Minni", redis.hgetAll(userKeys.get(2)).get("name"));
+    }
+
+    @Test
+    void sort_hashes_by_different_criteria() {
+        redis.hset("users:1", Map.of("name", "Pippo", "age", "35"));
+        redis.hset("users:2", Map.of("name", "Pluto", "age", "30"));
+        redis.hset("users:3", Map.of("name", "Minni", "age", "40"));
+
+        // add ids in no particular order
+        redis.sadd("user:ids", "3", "2", "1");
+
+        // order ids naturally
+        List<String> userIds = redis.sort("user:ids");
+        assertThat(userIds).containsExactly("1", "2", "3");
+
+        // order ids by linking each id to the machint user, and than using the 'age' field
+        List<String> usersIdSortedByAge = redis.sort("user:ids", new SortingParams().by("users:*->age"));
+        assertThat(usersIdSortedByAge).containsExactly("2", "1", "3");
+
+        List<String> userIdsSortedByName = redis.sort("user:ids", new SortingParams().by("users:*->name").alpha());
+        assertThat(userIdsSortedByName).containsExactly("3", "1", "2");
     }
 }
