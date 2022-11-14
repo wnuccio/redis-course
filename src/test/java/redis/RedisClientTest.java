@@ -110,7 +110,7 @@ public class RedisClientTest {
     }
 
     @Test
-    void ordered_set_of_values() {
+    void sorted_set_of_values() {
         redis.zadd("key", 2, "value2");
         redis.zadd("key", 1, "value1");
         redis.zadd("key", 3, "value3");
