@@ -151,11 +151,16 @@ public class RedisClientTest {
         List<String> userIds = redis.sort("user:ids");
         assertThat(userIds).containsExactly("1", "2", "3");
 
-        // order ids by linking each id to the machint user, and than using the 'age' field
+        // order ids by the 'age' field
         List<String> usersIdSortedByAge = redis.sort("user:ids", new SortingParams().by("users:*->age"));
         assertThat(usersIdSortedByAge).containsExactly("2", "1", "3");
 
+        // order ids by the 'name' field
         List<String> userIdsSortedByName = redis.sort("user:ids", new SortingParams().by("users:*->name").alpha());
         assertThat(userIdsSortedByName).containsExactly("3", "1", "2");
+
+        // order by the 'age' field and then take the 'name' field
+        List<String> userNamesSortedByAge = redis.sort("user:ids", new SortingParams().by("users:*->age").get("users:*->name"));
+        assertThat(userNamesSortedByAge).containsExactly("Pluto", "Pippo", "Minni");
     }
 }
