@@ -1,6 +1,5 @@
 package redis;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Jedis;
@@ -8,9 +7,11 @@ import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 import redis.clients.jedis.params.SetParams;
 import redis.clients.jedis.params.SortingParams;
-import redis.clients.jedis.resps.Tuple;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -162,5 +163,14 @@ public class RedisClientTest {
         // order by the 'age' field and then take the 'name' field
         List<String> userNamesSortedByAge = redis.sort("user:ids", new SortingParams().by("users:*->age").get("users:*->name"));
         assertThat(userNamesSortedByAge).containsExactly("Pluto", "Pippo", "Minni");
+
+        // order by the 'age' field and then take both the 'name' and the 'age'
+        List<String> usersWithIdAndProperties = redis.sort("user:ids", new SortingParams()
+                .by("users:*->age")
+                .get("#", "users:*->name", "users:*->age"));
+        assertThat(usersWithIdAndProperties).containsExactly(
+                "2", "Pluto", "30",
+                "1", "Pippo", "35",
+                "3", "Minni", "40");
     }
 }
