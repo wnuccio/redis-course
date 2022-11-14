@@ -86,7 +86,7 @@ public class RedisClientTest {
     }
 
     @Test
-    void add_and_retrieves_members_in_a_set() {
+    void add_and_retrieves_members_in_a_set_by_ensuring_uniqueness() {
         redis.sadd("colors", "red", "blue", "green");
         redis.sadd("colors", "blue");
 
