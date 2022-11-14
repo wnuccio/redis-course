@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -123,24 +124,33 @@ public class RedisClientTest {
     }
 
     @Test
-    void retrieve_items_added_to_a_sorted_set() {
-        redis.hset("user1", Map.of("name", "Pippo", "age", "35"));
-        redis.hset("user2", Map.of("name", "Pluto", "age", "30"));
-        redis.hset("user3", Map.of("name", "Minni", "age", "40"));
+    void retrieves_all_users_by_manually_joining_an_id_set_with_single_hashes_throughout_a_pipeline() {
+        redis.hset("users#1", Map.of("name", "Pippo", "age", "35"));
+        redis.hset("users#2", Map.of("name", "Pluto", "age", "30"));
+        redis.hset("users#3", Map.of("name", "Minni", "age", "40"));
 
-        redis.zadd("users:age", 35, "user1");
-        redis.zadd("users:age", 30, "user2");
-        redis.zadd("users:age", 40, "user3");
+        redis.sadd("user:ids", "1");
+        redis.sadd("user:ids", "2");
+        redis.sadd("user:ids", "3");
 
-        List<String> userKeys = redis.zrange("users:age", 0, 2);
+        Set<String> userIds = redis.smembers("user:ids");
 
-        assertEquals("Pluto", redis.hgetAll(userKeys.get(0)).get("name"));
-        assertEquals("Pippo", redis.hgetAll(userKeys.get(1)).get("name"));
-        assertEquals("Minni", redis.hgetAll(userKeys.get(2)).get("name"));
+        // retrieves all users with a pipeline of hgetAll
+        Pipeline pipeline = redis.pipelined();
+        List<Response<Map<String, String>>> userResponses = userIds.stream()
+                .map(userId -> pipeline.hgetAll("users" + "#" + userId))
+                .collect(Collectors.toList());
+        pipeline.sync();
+        List<String> userNames = userResponses.stream()
+                .map(Response::get)
+                .map(userHash -> userHash.get("name"))
+                .collect(Collectors.toList());
+
+        assertThat(userNames).containsExactlyInAnyOrder("Pippo", "Pluto", "Minni");
     }
 
     @Test
-    void sort_hashes_by_different_criteria() {
+    void retrieves_all_users_by_joining_an_id_set_with_single_hashes_throughout_the_sort_command() {
         redis.hset("users:1", Map.of("name", "Pippo", "age", "35"));
         redis.hset("users:2", Map.of("name", "Pluto", "age", "30"));
         redis.hset("users:3", Map.of("name", "Minni", "age", "40"));
