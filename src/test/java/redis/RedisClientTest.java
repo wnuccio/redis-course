@@ -183,4 +183,17 @@ public class RedisClientTest {
                 "1", "Pippo", "35",
                 "3", "Minni", "40");
     }
+
+
+    @Test
+    void adds_elements_to_right_and_left_side_of_a_list_and_retrieves_it() {
+        redis.rpush("list", "v1");
+        redis.rpush("list", "v2");
+        redis.rpush("list", "v3");
+        redis.lpush("list", "v0");
+
+        List<String> values = redis.lrange("list", 0, -1);
+
+        assertThat(values).containsExactly("v0", "v1", "v2", "v3");
+    }
 }
