@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
+import redis.clients.jedis.params.LPosParams;
 import redis.clients.jedis.params.SetParams;
 import redis.clients.jedis.params.SortingParams;
 
@@ -195,8 +196,32 @@ public class RedisClientTest {
         redis.rpush("list", "v3");
         redis.lpush("list", "v0");
 
-        List<String> values = redis.lrange("list", 0, -1);
+        long size = redis.llen("list");
+        List<String> values = redis.lrange("list", 0, -2);
 
-        assertThat(values).containsExactly("v0", "v1", "v2", "v3");
+        assertThat(size).isEqualTo(4);
+        assertThat(values).containsExactly("v0", "v1", "v2");
+    }
+
+    @Test
+    void retrieve_elements_of_a_list_throughout_lpos_command() {
+        redis.rpush("list", "a");
+        redis.rpush("list", "b");
+        redis.rpush("list", "a");
+        redis.rpush("list", "c");
+        redis.rpush("list", "a");
+        redis.rpush("list", "d");
+
+        Long indexOfB = redis.lpos("list", "b");
+        assertThat(indexOfB).isEqualTo(1);
+
+        Long indexOfFirstA = redis.lpos("list", "a", new LPosParams().rank(1));
+        Long indexOfLastA = redis.lpos("list", "a", new LPosParams().rank(3));
+        assertThat(indexOfFirstA).isEqualTo(0);
+        assertThat(indexOfLastA).isEqualTo(4);
+
+        List<Long> allIndexesOfA = redis.lpos("list", "a", new LPosParams(), 3);
+        assertThat(allIndexesOfA).containsExactly(0L, 2L, 4L);
+
     }
 }
