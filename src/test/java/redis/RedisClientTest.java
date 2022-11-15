@@ -206,6 +206,10 @@ public class RedisClientTest {
         assertThat(redis.lindex("list", 1)).isEqualTo("v1");
         assertThat(redis.lindex("list", 2)).isEqualTo("v2");
         assertThat(redis.lindex("list", 3)).isEqualTo("v3");
+
+        // negative indexes
+        assertThat(redis.lindex("list", -1)).isEqualTo("v3");
+        assertThat(redis.lindex("list", -2)).isEqualTo("v2");
     }
 
     @Test
