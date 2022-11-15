@@ -197,10 +197,15 @@ public class RedisClientTest {
         redis.lpush("list", "v0");
 
         long size = redis.llen("list");
-        List<String> values = redis.lrange("list", 0, -2);
-
         assertThat(size).isEqualTo(4);
+
+        List<String> values = redis.lrange("list", 0, -2);
         assertThat(values).containsExactly("v0", "v1", "v2");
+
+        assertThat(redis.lindex("list", 0)).isEqualTo("v0");
+        assertThat(redis.lindex("list", 1)).isEqualTo("v1");
+        assertThat(redis.lindex("list", 2)).isEqualTo("v2");
+        assertThat(redis.lindex("list", 3)).isEqualTo("v3");
     }
 
     @Test
