@@ -27,7 +27,7 @@ public class RedisClientTest {
     }
 
     @Test
-    void redis_returns_different_values_for_different_keys() {
+    void set_key_value_pairs_in_redis() {
         redis.set("key1", "value1");
         redis.set("key2", "value2");
 
@@ -39,7 +39,7 @@ public class RedisClientTest {
     }
 
     @Test
-    void redis_removes_values_after_expiration_time() {
+    void set_a_value_with_expiration_time() {
         redis.set("key1", "value1");
         redis.set("key2", "value2", SetParams.setParams().ex(1));
 
@@ -50,7 +50,7 @@ public class RedisClientTest {
     }
 
     @Test
-    void redis_returns_hash_values() {
+    void define_a_hash_and_retrieve_its_values() {
         redis.hset("hashkey", Map.of("subkey1", "subvalue1", "subkey2", "subvalue2"));
 
         Map<String, String> allValues = redis.hgetAll("hashkey");
@@ -63,9 +63,12 @@ public class RedisClientTest {
     }
 
     @Test
-    void redis_returns_empty_map_for_a_missing_hash() {
-        Map<String, String> allValues = redis.hgetAll("key");
-        String value = redis.hget("key", "subkey");
+    void a_missing_hash_is_returned_as_an_empty_map() {
+        // no hash defined here
+
+        Map<String, String> allValues = redis.hgetAll("hashkey");
+
+        String value = redis.hget("hashkey", "hashfield");
 
         assertEquals(Collections.emptyMap(), allValues);
         assertNull(value);
@@ -86,7 +89,7 @@ public class RedisClientTest {
     }
 
     @Test
-    void add_and_retrieves_members_in_a_set_by_ensuring_uniqueness() {
+    void add_and_retrieve_members_in_a_set_by_ensuring_uniqueness() {
         redis.sadd("colors", "red", "blue", "green");
         redis.sadd("colors", "blue");
 
@@ -114,17 +117,17 @@ public class RedisClientTest {
 
     @Test
     void sorted_set_of_values() {
-        redis.zadd("key", 2, "value2");
-        redis.zadd("key", 1, "value1");
-        redis.zadd("key", 3, "value3");
+        redis.zadd("set", 2, "value2");
+        redis.zadd("set", 1, "value1");
+        redis.zadd("set", 3, "value3");
 
-        List<String> all = redis.zrange("key", 0, 2);
+        List<String> all = redis.zrange("set", 0, 2);
 
         assertThat(all).containsExactly("value1", "value2", "value3");
     }
 
     @Test
-    void retrieves_all_users_by_manually_joining_an_id_set_with_single_hashes_throughout_a_pipeline() {
+    void retrieve_all_users_by_manually_joining_an_id_with_the_corresponding_hash_throughout_a_pipeline() {
         redis.hset("users#1", Map.of("name", "Pippo", "age", "35"));
         redis.hset("users#2", Map.of("name", "Pluto", "age", "30"));
         redis.hset("users#3", Map.of("name", "Minni", "age", "40"));
@@ -150,7 +153,7 @@ public class RedisClientTest {
     }
 
     @Test
-    void retrieves_all_users_by_joining_an_id_set_with_single_hashes_throughout_the_sort_command() {
+    void retrieve_all_users_by_joining_an_id_with_the_corresponding_hash_throughout_the_sort_command() {
         redis.hset("users:1", Map.of("name", "Pippo", "age", "35"));
         redis.hset("users:2", Map.of("name", "Pluto", "age", "30"));
         redis.hset("users:3", Map.of("name", "Minni", "age", "40"));
@@ -186,7 +189,7 @@ public class RedisClientTest {
 
 
     @Test
-    void adds_elements_to_right_and_left_side_of_a_list_and_retrieves_it() {
+    void add_elements_to_the_right_and_left_sides_of_a_list_and_retrieve_them() {
         redis.rpush("list", "v1");
         redis.rpush("list", "v2");
         redis.rpush("list", "v3");
