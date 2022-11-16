@@ -32,19 +32,23 @@ public class RedisScriptTest {
     @Test
     void script_that_uses_KEYS_and_ARGV_arrays() {
         // Important: any 'key' inside the script must be specified within the KEYS array
-        String scriptId = redis.scriptLoad("redis.call('SET', KEYS[1], ARGV[1])");
+        String scriptId = redis.scriptLoad("" +
+                "local theKey = KEYS[1]" +
+                "local theValue = ARGV[1]" +
+                "redis.call('SET', theKey, theValue)" +
+        "");
 
-        redis.evalsha(scriptId, asList("key"), asList("value"));
+        redis.evalsha(scriptId, asList("color"), asList("red"));
 
-        assertThat(redis.get("key")).isEqualTo("value");
+        assertThat(redis.get("color")).isEqualTo("red");
     }
 
     @Test
     void script_written_in_a_file() throws IOException {
         String script = Files.readString(Path.of("./src/test/resources/script.txt"));
         String scriptId = redis.scriptLoad(script);
-        Object result = redis.evalsha(scriptId, asList("color"), asList("blu"));
+        Object result = redis.evalsha(scriptId, asList("number"), asList("1"));
 
-        assertThat(result).isEqualTo("blu");
+        assertThat(result).isEqualTo("2");
     }
 }

@@ -1,2 +1,4 @@
-redis.call('SET', KEYS[1], ARGV[1])
-return redis.call('GET', KEYS[1])
+local aKey = KEYS[1]
+local aValue = ARGV[1]
+redis.call('SET', aKey, tonumber(aValue) + 1)
+return redis.call('GET', aKey)
