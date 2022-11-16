@@ -1,4 +1,7 @@
 local aKey = KEYS[1]
 local aValue = ARGV[1]
+
+-- take the argument, add 1 and assign it to the key
 redis.call('SET', aKey, tonumber(aValue) + 1)
+
 return redis.call('GET', aKey)
