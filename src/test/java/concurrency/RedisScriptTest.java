@@ -1,7 +1,8 @@
-package redis;
+package concurrency;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import redis.RedisClientFactory;
 import redis.clients.jedis.Jedis;
 
 import java.io.IOException;

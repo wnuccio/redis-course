@@ -1,4 +1,6 @@
-package redis;
+package caching;
+
+import redis.Timer;
 
 import java.util.function.Supplier;
 

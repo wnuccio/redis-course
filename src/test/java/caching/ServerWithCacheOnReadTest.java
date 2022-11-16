@@ -1,7 +1,10 @@
-package redis;
+package caching;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import redis.RedisClientFactory;
+import redis.ServerWithCacheOnRead;
+import redis.SlowServer;
 import redis.clients.jedis.Jedis;
 
 public class ServerWithCacheOnReadTest {

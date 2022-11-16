@@ -1,6 +1,8 @@
-package redis;
+package concurrency;
 
 import org.junit.jupiter.api.Test;
+import redis.RedisClientFactory;
+import redis.Timer;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.params.SetParams;
 
@@ -9,8 +11,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class RedisLockTest {
 
     private static class AddSymbolToChain {
-        private Jedis redis;
-        private String key;
+        private final Jedis redis;
+        private final String key;
         private final String symbol;
         private final String lockKey;
 

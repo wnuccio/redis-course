@@ -1,6 +1,7 @@
-package redis;
+package caching;
 
 import org.junit.jupiter.api.Test;
+import redis.SlowServer;
 
 public class SlowServerTest {
 

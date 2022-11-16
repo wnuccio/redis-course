@@ -1,6 +1,8 @@
-package redis;
+package concurrency;
 
 import org.junit.jupiter.api.Test;
+import redis.RedisClientFactory;
+import redis.Timer;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
 
