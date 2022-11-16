@@ -10,14 +10,28 @@ class LockManager {
         while (retries >= 0) {
             retries--;
 
-            String lockAcquired = redis.set(lockKey, "lock", new SetParams().nx());
-            if (lockAcquired != null) {
-                runnable.run();
-                redis.del(lockKey);
+            boolean executed = tryToExecute(redis, lockKey, runnable);
+            if (executed) {
                 break;
             } else {
                 Timer.waitSomeMilliseconds(100);
             }
+        }
+    }
+
+    private static boolean tryToExecute(Jedis redis, String lockKey, Runnable runnable) {
+        try {
+            String lockAcquired = redis.set(lockKey, "lock", new SetParams().nx());
+
+            if (lockAcquired == null)
+                return false;
+
+            runnable.run();
+            return true;
+
+        } finally {
+            // releas the lock in any case
+            redis.del(lockKey);
         }
     }
 }
