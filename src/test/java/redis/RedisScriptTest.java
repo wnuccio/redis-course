@@ -4,6 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Jedis;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,5 +37,14 @@ public class RedisScriptTest {
         redis.evalsha(scriptId, asList("key"), asList("value"));
 
         assertThat(redis.get("key")).isEqualTo("value");
+    }
+
+    @Test
+    void script_written_in_a_file() throws IOException {
+        String script = Files.readString(Path.of("./src/test/resources/script.txt"));
+        String scriptId = redis.scriptLoad(script);
+        Object result = redis.evalsha(scriptId, asList("color"), asList("blu"));
+
+        assertThat(result).isEqualTo("blu");
     }
 }
