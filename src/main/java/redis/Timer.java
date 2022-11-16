@@ -21,11 +21,7 @@ public class Timer {
     }
 
     public static void waitSomeSeconds(int i) {
-        try {
-            Thread.sleep(i * 1000L);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        waitSomeMilliseconds(i*1000);
     }
 
     public static void waitSomeMilliseconds(int millis) {
