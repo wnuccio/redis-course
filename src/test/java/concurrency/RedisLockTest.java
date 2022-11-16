@@ -2,9 +2,7 @@ package concurrency;
 
 import org.junit.jupiter.api.Test;
 import redis.RedisClientFactory;
-import redis.Timer;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.params.SetParams;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,6 +12,7 @@ public class RedisLockTest {
         private final Jedis redis;
         private final String key;
         private final String symbol;
+
         private final String lockKey;
 
         public AddSymbolToChain(Jedis redis, String key, String symbol, String lockKey) {
@@ -23,26 +22,8 @@ public class RedisLockTest {
             this.lockKey = lockKey;
         }
 
-        private void acquireLockAndRun(Runnable runnable) {
-            int retries = 10;
-
-            while (retries >= 0) {
-                retries--;
-
-                String lockAcquired = redis.set(lockKey, "lock", new SetParams().nx());
-
-                if (lockAcquired != null) {
-                    runnable.run();
-                    redis.del(lockKey);
-                    break;
-                } else {
-                    Timer.waitSomeMilliseconds(100);
-                }
-            }
-        }
-
         private void run() {
-            acquireLockAndRun(() -> {
+            LockManager.acquireLockAndRun(redis, lockKey, () -> {
                         String value = redis.get(key);
                         value += symbol;
                         redis.set(key, value);
